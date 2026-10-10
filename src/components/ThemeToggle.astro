@@ -1,0 +1,50 @@
+---
+import Icon from './Icon.astro';
+---
+
+<button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false">
+  <span class="visually-hidden">Light theme</span>
+  <span class="when-dark" aria-hidden="true"><Icon name="sun" size={14} /> Light</span>
+  <span class="when-light" aria-hidden="true"><Icon name="moon" size={14} /> Dark</span>
+</button>
+
+<style>
+  .when-dark,
+  .when-light {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  :global([data-theme='light']) .when-dark,
+  :global(:root:not([data-theme='light'])) .when-light {
+    display: none;
+  }
+</style>
+
+<script>
+  // The initial theme is set by the inline script in Base.astro before the
+  // page paints. This only handles clicks and keeps aria-pressed in sync.
+  const root = document.documentElement;
+  const isLight = () => root.getAttribute('data-theme') === 'light';
+
+  function sync() {
+    const light = isLight();
+    document.querySelectorAll('[data-theme-toggle]').forEach((b) => b.setAttribute('aria-pressed', String(light)));
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f7f8fa' : '#111417');
+  }
+
+  document.addEventListener('click', (event) => {
+    const button = (event.target as Element | null)?.closest('[data-theme-toggle]');
+    if (!button) return;
+    const next = isLight() ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    try {
+      localStorage.setItem('theme', next);
+    } catch {
+      // Storage blocked (private mode, strict settings): the choice lasts for this page only.
+    }
+    sync();
+  });
+
+  sync();
+</script>

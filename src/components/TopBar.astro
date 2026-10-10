@@ -1,0 +1,35 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import { profile } from '../lib/data';
+import { publishedNotes } from '../lib/notes';
+import { url } from '../lib/url';
+
+interface Props {
+  current?: string;
+}
+const { current } = Astro.props;
+
+// Notes joins the menu automatically once the first note is published.
+const hasNotes = (await publishedNotes()).length > 0;
+
+const links = [
+  { key: 'projects', label: 'Projects', href: url('/projects/') },
+  ...(hasNotes ? [{ key: 'notes', label: 'Notes', href: url('/notes/') }] : []),
+  { key: 'resume', label: 'Resume', href: url('/resume/') },
+  { key: 'contact', label: 'Contact', href: url('/#contact') },
+];
+---
+
+<header class="topbar">
+  <div class="container topbar-inner">
+    <a class="brand" href={url('/')}>{profile.name}</a>
+    <nav class="topnav" aria-label="Main">
+      {links.map((l) => (
+        <a href={l.href} aria-current={current === l.key ? 'page' : undefined}>
+          {l.label}
+        </a>
+      ))}
+      <ThemeToggle />
+    </nav>
+  </div>
+</header>

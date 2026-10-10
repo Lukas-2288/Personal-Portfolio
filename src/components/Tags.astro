@@ -1,0 +1,13 @@
+---
+interface Props {
+  items: string[];
+  label?: string;
+  limit?: number;
+}
+const { items, label = 'Tools', limit } = Astro.props;
+const shown = limit ? items.slice(0, limit) : items;
+---
+
+<ul class="tags" aria-label={label}>
+  {shown.map((t) => <li class="tag">{t}</li>)}
+</ul>

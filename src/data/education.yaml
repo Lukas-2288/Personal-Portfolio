@@ -1,0 +1,15 @@
+# Degrees, newest first.
+
+- degree: B.S. in Computer Science
+  school: Wayne State University
+  short: WSU
+  location: Detroit, MI
+  dates: May 2021 – Dec 2025
+  honors: GPA 3.50 · Dean's List, Fall 2024 and Winter 2025
+  coursework:
+    - Software Engineering
+    - Algorithm Design & Analysis
+    - Database Management
+    - Operating Systems
+    - Computer Architecture
+    - Ethical Hacking

@@ -1,0 +1,64 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import Tags from '../../components/Tags.astro';
+import { publishedNotes } from '../../lib/notes';
+import { formatDate, url } from '../../lib/url';
+
+export async function getStaticPaths() {
+  const notes = await publishedNotes();
+  return notes.map((note) => ({ params: { slug: note.id }, props: { note } }));
+}
+
+interface Props {
+  note: CollectionEntry<'notes'>;
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+---
+
+<Base title={note.data.title} description={note.data.description} current="notes">
+  <main id="main" class="container narrow page">
+    <article class="note">
+      <header class="note-head">
+        <time class="label" datetime={note.data.date.toISOString()}>{formatDate(note.data.date)}</time>
+        <h1>{note.data.title}</h1>
+        <p class="lede">{note.data.description}</p>
+        {note.data.tags.length > 0 && <Tags items={note.data.tags} label="Topics" />}
+      </header>
+      <div class="prose">
+        <Content />
+      </div>
+    </article>
+    <a class="arrow-link" href={url('/notes/')}><Icon name="arrow-left" /> All notes</a>
+  </main>
+</Base>
+
+<style>
+  .page {
+    padding-block: 56px 0;
+    display: grid;
+    gap: 40px;
+  }
+  .note {
+    display: grid;
+    gap: 32px;
+  }
+  .note-head {
+    display: grid;
+    gap: 12px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+  }
+  h1 {
+    font-size: var(--step-4);
+    line-height: 1.1;
+  }
+  .lede {
+    color: var(--muted);
+    font-size: 1.1875rem;
+    max-width: var(--measure);
+  }
+</style>

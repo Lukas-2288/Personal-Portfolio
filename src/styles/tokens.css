@@ -1,0 +1,46 @@
+/*
+  Design tokens. Dark is the default theme; light applies when
+  <html data-theme="light">. Every color pair here is checked by
+  `npm run check:contrast` — run it after changing any value.
+*/
+
+:root {
+  color-scheme: dark;
+  --bg: #111417;
+  --surface: #171b20;
+  --line: #272d34;
+  --line-strong: #5b6570;
+  --text: #e6e8eb;
+  --muted: #a3abb5;
+  --accent: #5cc0cf;
+  --grid: rgb(255 255 255 / 0.028);
+  --tag-tint: 14%;
+
+  --font-head: 'Source Serif 4 Variable', Georgia, 'Times New Roman', serif;
+  --font-body: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --step--1: 0.8125rem;  /* 13px: captions */
+  --step-0: 1.0625rem;   /* 17px: body */
+  --step-1: 1.25rem;     /* 20px */
+  --step-2: 1.5rem;      /* 24px */
+  --step-3: 2rem;        /* 32px */
+  --step-4: clamp(2.25rem, 1.6rem + 2.4vw, 3rem); /* page titles */
+  --label: 0.75rem;      /* 12px mono labels */
+
+  --radius: 8px;
+  --measure: 65ch;
+  --gutter: clamp(16px, 4vw, 40px);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7f8fa;
+  --surface: #ffffff;
+  --line: #dce0e5;
+  --line-strong: #7f8893;
+  --text: #16191d;
+  --muted: #545c66;
+  --accent: #17697a;
+  --grid: rgb(0 0 0 / 0.035);
+}

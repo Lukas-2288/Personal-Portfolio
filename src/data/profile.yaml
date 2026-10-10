@@ -1,0 +1,19 @@
+# Who you are. Shown in the home page sidebar, About and Contact sections,
+# and in page titles and link previews.
+
+name: Lukas Sagmani
+role: Systems Integration Engineer
+headline: I connect software with automated vehicles on the plant floor.
+intro: Systems Integration Engineer at Daifuku North America. B.S. in Computer Science, Wayne State University.
+
+# Each paragraph is separated by a blank line.
+about: |
+  I'm a systems integration engineer at Daifuku North America. I work on automated guided vehicle (AGV) and autonomous mobile robot (AMR) systems: I set up how vehicle fleets route through a plant, test them on live production floors, and work through problems with customers on site.
+
+  I came to this from software. I earned a B.S. in Computer Science at Wayne State University, built mobile apps with teams, and supported users and systems in IT internships at OneStream Software and JVIS USA.
+
+  Next, I want to keep growing in robotics and automation, especially where software decides how machines move.
+
+email: lsagmani2003@gmail.com
+linkedin: https://www.linkedin.com/in/sagmani/
+github: https://github.com/Lukas-2288

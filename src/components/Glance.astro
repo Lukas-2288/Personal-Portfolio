@@ -1,0 +1,129 @@
+---
+// The "At a glance" panel at the top of every project page: everything a
+// recruiter needs in 30 seconds.
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+const d = Astro.props.project.data;
+
+const facts = [
+  { label: 'Role', value: d.role },
+  { label: 'Dates', value: d.duration ? `${d.dates} · ${d.duration}` : d.dates },
+  ...(d.team ? [{ label: 'Team', value: d.team }] : []),
+];
+---
+
+<section class="glance" aria-labelledby="glance-h">
+  <h2 id="glance-h" class="label glance-h">At a glance</h2>
+
+  <dl class="facts">
+    {facts.map((f) => (
+      <div>
+        <dt class="label">{f.label}</dt>
+        <dd>{f.value}</dd>
+      </div>
+    ))}
+  </dl>
+
+  <ul class="metrics" aria-label="Results">
+    {d.metrics.map((m) => (
+      <li>
+        <strong>{m.value}</strong>
+        <span>{m.label}</span>
+      </li>
+    ))}
+  </ul>
+
+  <p class="summary">{d.summary}</p>
+
+  {d.confidential && (
+    <p class="nda">
+      <span class="label">Note</span>
+      <span>Customer, vendor and internal software names are left out for confidentiality. Diagrams are generic.</span>
+    </p>
+  )}
+
+  <div class="glance-links">
+    <a class="arrow-link" href="#details">Technical details <Icon name="arrow-down" size={16} /></a>
+    {d.links.demo && (
+      <a class="arrow-link" href={d.links.demo}>Live demo <Icon name="external" size={15} /></a>
+    )}
+    {d.links.repo && (
+      <a class="arrow-link" href={d.links.repo}>Source code <Icon name="external" size={15} /></a>
+    )}
+  </div>
+</section>
+
+<style>
+  .glance {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: clamp(18px, 3vw, 28px);
+    display: grid;
+    gap: 22px;
+  }
+  .glance-h {
+    color: var(--accent);
+  }
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+    gap: 14px 28px;
+  }
+  .facts div {
+    display: grid;
+    gap: 2px;
+    align-content: start;
+  }
+  .facts dd {
+    font-size: 1rem;
+  }
+  .metrics {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+    gap: 14px 28px;
+  }
+  .metrics li {
+    border-left: 2px solid var(--accent);
+    padding: 2px 0 2px 14px;
+    display: grid;
+    gap: 2px;
+    align-content: start;
+  }
+  .metrics strong {
+    font-family: var(--font-head);
+    font-size: var(--step-3);
+    font-weight: 600;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .metrics span {
+    color: var(--muted);
+    font-size: 0.9375rem;
+    line-height: 1.4;
+  }
+  .summary {
+    max-width: var(--measure);
+    font-size: 1.125rem;
+  }
+  .nda {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    color: var(--muted);
+    font-size: 0.9375rem;
+    border-top: 1px dashed var(--line);
+    padding-top: 14px;
+  }
+  .glance-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 24px;
+  }
+</style>

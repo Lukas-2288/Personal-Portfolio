@@ -1,0 +1,503 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import ProjectRow from '../components/ProjectRow.astro';
+import Tags from '../components/Tags.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import photo from '../assets/lukas-sagmani.jpg';
+import { aboutParagraphs, education, experience, profile, skills } from '../lib/data';
+import { publishedNotes } from '../lib/notes';
+import { formatDate, url } from '../lib/url';
+
+const featured = (await getCollection('projects', (p) => p.data.featured)).sort(
+  (a, b) => b.data.sortDate.valueOf() - a.data.sortDate.valueOf(),
+);
+const notes = (await publishedNotes()).slice(0, 3);
+
+const sections = [
+  { id: 'about', label: 'About' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'education', label: 'Education' },
+  { id: 'skills', label: 'Skills' },
+  ...(notes.length ? [{ id: 'notes', label: 'Notes' }] : []),
+  { id: 'contact', label: 'Contact' },
+];
+---
+
+<Base topbar={false}>
+  <div class="home container">
+    <header class="sidebar">
+      <div class="sidebar-main">
+        <div class="avatar">
+          <Image src={photo} alt={`Portrait of ${profile.name}`} width={112} height={112} densities={[1, 2]} loading="eager" />
+        </div>
+        <h1 class="name">{profile.name}</h1>
+        <p class="headline">{profile.headline}</p>
+        <p class="intro">{profile.intro}</p>
+
+        <nav class="section-nav" aria-label="Sections">
+          <ul>
+            {sections.map((s) => (
+              <li><a href={`#${s.id}`} data-section-link={s.id}>{s.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+
+        <div class="btn-row">
+          <a class="btn solid" href={url('/resume/')}>Resume</a>
+          <a class="btn" href="#contact">Contact</a>
+        </div>
+      </div>
+
+      <div class="sidebar-foot">
+        <ul class="social">
+          <li><a href={profile.github}><Icon name="github" size={20} /><span class="visually-hidden">GitHub</span></a></li>
+          <li><a href={profile.linkedin}><Icon name="linkedin" size={19} /><span class="visually-hidden">LinkedIn</span></a></li>
+          <li><a href={`mailto:${profile.email}`}><Icon name="mail" size={21} /><span class="visually-hidden">Email</span></a></li>
+        </ul>
+        <ThemeToggle />
+      </div>
+    </header>
+
+    <main id="main" class="home-main">
+      <section id="about" aria-labelledby="about-h" data-section>
+        <h2 id="about-h" class="section-head">About</h2>
+        <div class="about">
+          {aboutParagraphs.map((p) => <p>{p}</p>)}
+        </div>
+      </section>
+
+      <section id="projects" aria-labelledby="projects-h" data-section>
+        <h2 id="projects-h" class="section-head">Projects</h2>
+        <div class="stack">
+          {featured.map((p) => <ProjectRow project={p} />)}
+        </div>
+        <a class="arrow-link" href={url('/projects/')}>All projects <Icon name="arrow-right" /></a>
+      </section>
+
+      <section id="experience" aria-labelledby="experience-h" data-section>
+        <h2 id="experience-h" class="section-head">Experience</h2>
+        <ol class="timeline">
+          {experience.map((e) => (
+            <li>
+              <span class="when">{e.dates}</span>
+              <div>
+                <h3>
+                  {e.role} <span class="org">· {e.company}</span>
+                </h3>
+                <p class="muted">{e.summary}</p>
+                {e.project && (
+                  <a class="arrow-link small" href={url(`/projects/${e.project}/`)}>
+                    See the project <Icon name="arrow-right" size={14} />
+                  </a>
+                )}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section id="education" aria-labelledby="education-h" data-section>
+        <h2 id="education-h" class="section-head">Education</h2>
+        {education.map((ed) => (
+          <article class="edu">
+            <span class="crest" aria-hidden="true">{ed.short}</span>
+            <div class="edu-body">
+              <h3>{ed.degree}</h3>
+              <p>{ed.school} · {ed.location}</p>
+              <p class="label">{ed.dates}</p>
+              {ed.honors && <p class="muted">{ed.honors}</p>}
+              {ed.coursework.length > 0 && (
+                <div class="coursework">
+                  <span class="label">Relevant coursework</span>
+                  <Tags items={ed.coursework} label="Relevant coursework" />
+                </div>
+              )}
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section id="skills" aria-labelledby="skills-h" data-section>
+        <h2 id="skills-h" class="section-head">Skills</h2>
+        <div class="skill-groups">
+          {skills.map((g) => (
+            <div>
+              <h3 class="label">{g.group}</h3>
+              <Tags items={g.items} label={g.group} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {notes.length > 0 && (
+        <section id="notes" aria-labelledby="notes-h" data-section>
+          <h2 id="notes-h" class="section-head">Notes</h2>
+          <ul class="note-list">
+            {notes.map((n) => (
+              <li>
+                <time class="label" datetime={n.data.date.toISOString()}>{formatDate(n.data.date)}</time>
+                <a href={url(`/notes/${n.id}/`)}>{n.data.title}</a>
+                <p class="muted">{n.data.description}</p>
+              </li>
+            ))}
+          </ul>
+          <a class="arrow-link" href={url('/notes/')}>All notes <Icon name="arrow-right" /></a>
+        </section>
+      )}
+
+      <section id="contact" aria-labelledby="contact-h" data-section>
+        <h2 id="contact-h" class="section-head">Contact</h2>
+        <p class="contact-lede">Email is the fastest way to reach me. I'm also on LinkedIn and GitHub.</p>
+        <ul class="contact-list">
+          <li>
+            <Icon name="mail" size={18} />
+            <a href={`mailto:${profile.email}`}>{profile.email}</a>
+          </li>
+          <li>
+            <Icon name="linkedin" size={16} />
+            <a href={profile.linkedin}>{profile.linkedin.replace(/^https:\/\/(www\.)?/, '').replace(/\/$/, '')}</a>
+          </li>
+          <li>
+            <Icon name="github" size={17} />
+            <a href={profile.github}>{profile.github.replace(/^https:\/\//, '')}</a>
+          </li>
+        </ul>
+      </section>
+    </main>
+  </div>
+</Base>
+
+<style>
+  .home {
+    display: grid;
+    grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+    gap: clamp(40px, 7vw, 104px);
+  }
+
+  /* ----- Sidebar ----- */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    align-self: start;
+    min-height: 100vh;
+    min-height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    overflow-y: auto;
+    padding-block: 72px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 32px;
+  }
+  .sidebar-main {
+    display: grid;
+    gap: 16px;
+    align-content: start;
+  }
+  .avatar {
+    width: 112px;
+    height: 112px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .avatar :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .name {
+    font-size: var(--step-4);
+    line-height: 1.05;
+    margin-top: 4px;
+  }
+  .headline {
+    font-size: 1.1875rem;
+    font-weight: 600;
+    line-height: 1.45;
+    max-width: 28ch;
+  }
+  .intro {
+    color: var(--muted);
+    max-width: 34ch;
+  }
+  .section-nav ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 12px;
+    display: grid;
+    gap: 2px;
+  }
+  .section-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding-block: 5px;
+    font-family: var(--font-mono);
+    font-size: var(--label);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .section-nav a::before {
+    content: '';
+    width: 24px;
+    border-top: 1px solid var(--line-strong);
+    transition: width 0.2s;
+  }
+  .section-nav a:hover,
+  .section-nav a[aria-current='true'] {
+    color: var(--text);
+  }
+  .section-nav a:hover::before,
+  .section-nav a[aria-current='true']::before {
+    width: 48px;
+    border-color: var(--text);
+  }
+  .sidebar .btn-row {
+    margin-top: 8px;
+  }
+  .sidebar-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .social {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 18px;
+  }
+  .social a {
+    color: var(--muted);
+    display: inline-flex;
+  }
+  .social a:hover {
+    color: var(--text);
+  }
+
+  /* ----- Main column ----- */
+  .home-main {
+    padding-block: 72px 24px;
+    display: grid;
+    gap: 72px;
+    min-width: 0;
+  }
+  .home-main > section {
+    display: grid;
+    gap: 22px;
+    align-content: start;
+  }
+  .about {
+    display: grid;
+    gap: 16px;
+    max-width: var(--measure);
+    color: var(--muted);
+  }
+  .about p:first-child {
+    color: var(--text);
+  }
+  .stack {
+    display: grid;
+    gap: 12px;
+  }
+
+  .timeline {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 24px;
+  }
+  .timeline li {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 4px 24px;
+  }
+  .when {
+    font-family: var(--font-mono);
+    font-size: var(--label);
+    color: var(--muted);
+    padding-top: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .timeline h3 {
+    font-size: 1.0625rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+  }
+  .org {
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .timeline p {
+    font-size: 0.9688rem;
+    max-width: var(--measure);
+  }
+  .arrow-link.small {
+    font-size: 0.875rem;
+    margin-top: 4px;
+  }
+
+  .edu {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .crest {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) var(--tag-tint), var(--bg));
+  }
+  .edu-body {
+    display: grid;
+    gap: 4px;
+  }
+  .edu-body h3 {
+    font-size: var(--step-1);
+  }
+  .coursework {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .skill-groups {
+    display: grid;
+    gap: 22px;
+  }
+  .skill-groups > div {
+    display: grid;
+    gap: 10px;
+  }
+
+  .note-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 18px;
+  }
+  .note-list li {
+    display: grid;
+    gap: 2px;
+  }
+  .note-list a {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--step-1);
+    color: var(--text);
+    text-decoration: none;
+  }
+  .note-list a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .contact-lede {
+    max-width: var(--measure);
+  }
+  .contact-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .contact-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+  .contact-list a {
+    font-size: 1.0625rem;
+  }
+
+  /* ----- Narrow screens: sidebar becomes a top block ----- */
+  @media (max-width: 900px) {
+    .home {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0;
+    }
+    .sidebar {
+      position: static;
+      min-height: 0;
+      max-height: none;
+      overflow: visible;
+      padding-block: 40px 8px;
+    }
+    .avatar {
+      width: 96px;
+      height: 96px;
+    }
+    .section-nav ul {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 18px;
+    }
+    .section-nav a::before {
+      display: none;
+    }
+    .section-nav a[aria-current='true'] {
+      color: var(--muted);
+    }
+    .home-main {
+      padding-top: 48px;
+      gap: 56px;
+    }
+  }
+  @media (max-width: 560px) {
+    .timeline li {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .edu {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+
+<script>
+  // Highlight the sidebar link for the section currently on screen (wide screens).
+  const links = new Map<string, HTMLElement>();
+  document.querySelectorAll<HTMLElement>('[data-section-link]').forEach((a) => links.set(a.dataset.sectionLink!, a));
+
+  const visible = new Set<string>();
+  const order = [...links.keys()];
+
+  function update() {
+    const active = order.find((id) => visible.has(id));
+    links.forEach((a, id) => {
+      if (id === active) a.setAttribute('aria-current', 'true');
+      else a.removeAttribute('aria-current');
+    });
+  }
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => (e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id)));
+        update();
+      },
+      { rootMargin: '-35% 0px -55% 0px' },
+    );
+    document.querySelectorAll<HTMLElement>('[data-section]').forEach((s) => observer.observe(s));
+  }
+</script>

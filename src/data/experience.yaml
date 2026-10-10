@@ -1,0 +1,27 @@
+# Work history, newest first. `project` (optional) links the entry to a
+# project page: use the project's file name without ".md".
+
+- role: Systems Integration Engineer I
+  company: Daifuku North America
+  location: Novi, MI
+  dates: Apr 2026 – Present
+  summary: Integrate AGV and AMR systems at customer sites, from path logic in AutoCAD to on-site commissioning and acceptance testing.
+  project: agv-fleet-expansion
+
+- role: IT Help Desk Intern
+  company: JVIS USA / Mayco International
+  location: Shelby Township, MI
+  dates: Feb 2026 – Apr 2026
+  summary: Resolved 30–40 tickets a week across several subsidiaries, ran Windows 11 upgrades, and managed Active Directory account lifecycles.
+
+- role: IT Service Desk Intern
+  company: OneStream Software
+  location: Birmingham, MI
+  dates: Jun 2024 – Aug 2024
+  summary: Imaged and deployed 50+ computers and set Active Directory permissions for 30+ users.
+
+- role: Judge
+  company: FIRST Robotics Competition
+  location: Detroit, MI
+  dates: Mar 2024
+  summary: Evaluated 20+ robotics teams on autonomous systems, mechanical design, and code quality with a panel of industry judges.

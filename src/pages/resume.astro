@@ -1,0 +1,74 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { profile } from '../lib/data';
+import { url } from '../lib/url';
+
+// To update the resume, replace public/resume.pdf. Keep the file name.
+const pdf = url('/resume.pdf');
+---
+
+<Base title="Resume" description={`Resume of ${profile.name}, ${profile.role}.`} current="resume">
+  <main id="main" class="container page">
+    <header class="page-head">
+      <div>
+        <h1>Resume</h1>
+        <p class="lede">One page, as a PDF.</p>
+      </div>
+      <div class="btn-row">
+        <a class="btn solid" href={pdf} download="Lukas-Sagmani-Resume.pdf"><Icon name="download" /> Download PDF</a>
+        <a class="btn" href={pdf} target="_blank" rel="noopener">Open in new tab <Icon name="external" size={15} /></a>
+      </div>
+    </header>
+
+    <div class="viewer">
+      <object data={pdf} type="application/pdf" title={`Resume of ${profile.name}`}>
+        <p class="fallback">
+          Your browser can't show the PDF here. <a href={pdf}>Open the resume</a> instead.
+        </p>
+      </object>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .page {
+    padding-block: 56px 0;
+    display: grid;
+    gap: 28px;
+  }
+  .page-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  h1 {
+    font-size: var(--step-4);
+  }
+  .lede {
+    color: var(--muted);
+    margin-top: 6px;
+  }
+  .viewer {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .viewer object {
+    display: block;
+    width: 100%;
+    height: min(1100px, 130vh);
+  }
+  .fallback {
+    padding: 24px;
+  }
+  /* Phones show only the first page of an embedded PDF, so use the buttons instead. */
+  @media (max-width: 760px) {
+    .viewer {
+      display: none;
+    }
+  }
+</style>

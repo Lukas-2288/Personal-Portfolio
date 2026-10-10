@@ -1,0 +1,42 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => Number(b.data.featured) - Number(a.data.featured) || b.data.sortDate.valueOf() - a.data.sortDate.valueOf(),
+);
+---
+
+<Base title="Projects" description="Work, team and personal projects by Lukas Sagmani, from automated vehicle systems to mobile apps." current="projects">
+  <main id="main" class="container page">
+    <header class="page-head">
+      <p class="label">{projects.length} projects</p>
+      <h1>Projects</h1>
+      <p class="lede">Automation work on plant floors and software I've built with teams and on my own. Each page starts with a short summary, then the technical details.</p>
+    </header>
+    <div class="grid-cards">
+      {projects.map((p) => <ProjectCard project={p} />)}
+    </div>
+  </main>
+</Base>
+
+<style>
+  .page {
+    padding-block: 56px 0;
+    display: grid;
+    gap: 36px;
+  }
+  .page-head {
+    display: grid;
+    gap: 10px;
+  }
+  h1 {
+    font-size: var(--step-4);
+  }
+  .lede {
+    color: var(--muted);
+    max-width: var(--measure);
+    font-size: 1.125rem;
+  }
+</style>

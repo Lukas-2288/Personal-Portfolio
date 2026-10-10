@@ -1,0 +1,75 @@
+---
+import Base from '../../layouts/Base.astro';
+import { publishedNotes } from '../../lib/notes';
+import { formatDate, url } from '../../lib/url';
+
+const notes = await publishedNotes();
+
+// No published notes yet: send visitors home instead of showing an empty page.
+if (notes.length === 0) return Astro.redirect(url('/'));
+---
+
+<Base title="Notes" description="Short notes by Lukas Sagmani on automation, automated vehicles and software." current="notes">
+  <main id="main" class="container narrow page">
+    <header class="page-head">
+      <h1>Notes</h1>
+      <p class="lede">Short write-ups on automation, automated vehicles and the software around them.</p>
+    </header>
+    <ul class="list">
+      {notes.map((n) => (
+        <li>
+          <time class="label" datetime={n.data.date.toISOString()}>{formatDate(n.data.date)}</time>
+          <a href={url(`/notes/${n.id}/`)}>{n.data.title}</a>
+          <p class="muted">{n.data.description}</p>
+        </li>
+      ))}
+    </ul>
+  </main>
+</Base>
+
+<style>
+  .page {
+    padding-block: 56px 0;
+    display: grid;
+    gap: 36px;
+  }
+  .page-head {
+    display: grid;
+    gap: 10px;
+  }
+  h1 {
+    font-size: var(--step-4);
+  }
+  .lede {
+    color: var(--muted);
+    max-width: var(--measure);
+    font-size: 1.125rem;
+  }
+  .list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0;
+  }
+  .list li {
+    display: grid;
+    gap: 4px;
+    padding-block: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .list a {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: var(--step-2);
+    line-height: 1.25;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .list a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+  .list p {
+    max-width: var(--measure);
+  }
+</style>

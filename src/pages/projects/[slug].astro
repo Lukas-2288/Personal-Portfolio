@@ -1,0 +1,189 @@
+---
+// Project page template. Every file in src/content/projects/ becomes a page
+// here: "At a glance" from the frontmatter, "Technical details" from the body.
+import { Image } from 'astro:assets';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Glance from '../../components/Glance.astro';
+import Icon from '../../components/Icon.astro';
+import Tags from '../../components/Tags.astro';
+import { url } from '../../lib/url';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('projects')).sort(
+    (a, b) => Number(b.data.featured) - Number(a.data.featured) || b.data.sortDate.valueOf() - a.data.sortDate.valueOf(),
+  );
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, prev: projects[i - 1], next: projects[i + 1] },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  prev?: CollectionEntry<'projects'>;
+  next?: CollectionEntry<'projects'>;
+}
+
+const { project, prev, next } = Astro.props;
+const d = project.data;
+const { Content } = await render(project);
+---
+
+<Base title={d.title} description={d.blurb} current="projects">
+  <main id="main" class="container narrow page">
+    <nav class="crumbs label" aria-label="Breadcrumb">
+      <a href={url('/projects/')}>Projects</a> <span aria-hidden="true">/</span> <span aria-current="page">{d.title}</span>
+    </nav>
+
+    <header class="title-block">
+      <p class="label">{d.kind}</p>
+      <h1>{d.title}</h1>
+    </header>
+
+    <Glance project={project} />
+
+    {d.gallery.length > 0 && (
+      <section class="gallery" aria-labelledby="screens-h">
+        <h2 id="screens-h" class="section-head">Screens</h2>
+        <div class="gallery-strip">
+          {d.gallery.map((g) => (
+            <figure>
+              <Image src={g.src} alt={g.alt} width={240} densities={[1, 2]} />
+              {g.caption && <figcaption>{g.caption}</figcaption>}
+            </figure>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section id="details" class="details" aria-labelledby="details-h">
+      <h2 id="details-h">Technical details</h2>
+      <Tags items={d.tags} />
+      <div class="prose">
+        <Content />
+      </div>
+    </section>
+
+    <nav class="pager" aria-label="More projects">
+      {prev ? (
+        <a href={url(`/projects/${prev.id}/`)} class="pager-link">
+          <span class="label"><Icon name="arrow-left" size={13} /> Previous</span>
+          <span class="pager-title">{prev.data.title}</span>
+        </a>
+      ) : <span />}
+      {next ? (
+        <a href={url(`/projects/${next.id}/`)} class="pager-link next">
+          <span class="label">Next <Icon name="arrow-right" size={13} /></span>
+          <span class="pager-title">{next.data.title}</span>
+        </a>
+      ) : <span />}
+    </nav>
+  </main>
+</Base>
+
+<style>
+  .page {
+    padding-block: 40px 0;
+    display: grid;
+    gap: 32px;
+  }
+  .crumbs a {
+    color: var(--muted);
+  }
+  .crumbs a:hover {
+    color: var(--text);
+  }
+  .title-block {
+    display: grid;
+    gap: 8px;
+  }
+  h1 {
+    font-size: var(--step-4);
+    line-height: 1.08;
+  }
+  .gallery {
+    display: grid;
+    gap: 16px;
+  }
+  .gallery-strip {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(160px, 220px);
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-snap-type: x proximity;
+  }
+  .gallery-strip figure {
+    margin: 0;
+    display: grid;
+    gap: 8px;
+    scroll-snap-align: start;
+  }
+  .gallery-strip :global(img) {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    display: block;
+  }
+  .gallery-strip figcaption {
+    font-size: var(--step--1);
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .details {
+    display: grid;
+    gap: 18px;
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+  }
+  .details h2 {
+    font-size: var(--step-3);
+  }
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+  }
+  .pager-link {
+    display: grid;
+    gap: 4px;
+    text-decoration: none;
+    color: var(--text);
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .pager-link:hover {
+    border-color: var(--line-strong);
+  }
+  .pager-link:hover .pager-title {
+    color: var(--accent);
+  }
+  .pager-link .label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pager-link.next {
+    text-align: right;
+    justify-items: end;
+  }
+  .pager-title {
+    font-family: var(--font-head);
+    font-weight: 600;
+  }
+  @media (max-width: 560px) {
+    .pager {
+      grid-template-columns: 1fr;
+    }
+    .pager-link.next {
+      text-align: left;
+      justify-items: start;
+    }
+  }
+</style>

@@ -1,0 +1,39 @@
+# Skill groups shown on the home page. Add, remove or reorder freely.
+
+- group: Automation & Controls
+  items:
+    - AGV/AMR systems integration
+    - On-site commissioning
+    - Vehicle path logic (AutoCAD)
+    - Traffic control & speed zones
+    - Magnetic guidance surveys
+    - Fleet monitoring & fault diagnosis
+    - Wireless call stations
+    - Site acceptance testing
+
+- group: Software
+  items:
+    - TypeScript
+    - JavaScript
+    - Python
+    - Java
+    - C++
+    - Swift
+    - React Native
+    - React
+    - Next.js
+    - SwiftUI
+    - Node.js
+    - Firebase
+    - SQL
+    - MongoDB
+
+- group: Tools & Platforms
+  items:
+    - AutoCAD
+    - Git & GitHub
+    - Docker
+    - Linux
+    - Expo
+    - Active Directory
+    - PowerShell

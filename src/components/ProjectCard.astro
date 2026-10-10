@@ -1,0 +1,22 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Diagram from './Diagram.astro';
+import Tags from './Tags.astro';
+import { url } from '../lib/url';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+const { project } = Astro.props;
+const d = project.data;
+---
+
+<a class="card" href={url(`/projects/${project.id}/`)}>
+  <div class="card-thumb"><Diagram name={d.diagram} /></div>
+  <div class="card-body">
+    <span class="label">{d.kind} · {d.dates}</span>
+    <h3 class="card-title">{d.title}</h3>
+    <p>{d.blurb}</p>
+    <Tags items={d.tags} limit={4} />
+  </div>
+</a>
